@@ -1,0 +1,3 @@
+[submodule "Assets/DraconianMarshmallows/Boilerplate"]
+	path = Assets/DraconianMarshmallows/Boilerplate
+	url = https://github.com/purple-movies/unity-starter-boilerplate.git
