@@ -7,15 +7,22 @@ using UnityEngine.AI;
 
 public class AgentController : DraconianBehaviour
 {
-    public Vector3 destination { set { navMeshAgent.destination = value; } }
-
     [SerializeField] private NavMeshAgent navMeshAgent;
     private LevelController levelController;
+    private Collider goalCollider;
+
+    public bool active { set { gameObject.SetActive(value); } }
 
     public void initialize(LevelController levelController)
     {
         reset();
         this.levelController = levelController;
+    }
+
+    public void setGoal(Transform goalTransform)
+    {
+        goalCollider = goalTransform.GetComponent<Collider>();
+        navMeshAgent.destination = goalTransform.position;
     }
 
     public void destroy()
@@ -24,8 +31,17 @@ public class AgentController : DraconianBehaviour
         Destroy(gameObject);
     }
 
+    protected override void OnTriggerEnter(Collider other)
+    {
+        base.OnTriggerEnter(other);
+
+        if (other.Equals(goalCollider))
+            levelController.agentReachedGoal(this);
+    }
+
     private void reset()
     {
         levelController = null;
+        goalCollider = null;
     }
 }

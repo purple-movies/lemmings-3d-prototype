@@ -6,9 +6,14 @@ using System;
 
 public class LevelController : BaseLevelController
 {
+    [Header("Prefabs")]
     [SerializeField] private GameObject agentPrefab;
+
+    [Header("Positions")]
     [SerializeField] private Transform goalPoint;
     [SerializeField] private Transform spawnPoint;
+
+    [Header("Other")]
     [SerializeField] private int totalAgents;
     [SerializeField] private int agentsToWinCount;
 
@@ -27,6 +32,14 @@ public class LevelController : BaseLevelController
     {
         base.startLevel();
         StartCoroutine(spawnAgent());
+    }
+
+    public void agentReachedGoal(AgentController agent)
+    {
+        Debug.Log("reached goal : " + agent);
+
+        savedAgents.Add(agent);
+        agent.active = false;
     }
 
     protected override void reset()
@@ -49,15 +62,15 @@ public class LevelController : BaseLevelController
     {
         while (agentsSpawned < totalAgents)
         {
-            Debug.Log("spawning agent !");
             agentsSpawned ++;
             GameObject agentGameObject = Instantiate(agentPrefab, spawnPoint.position, 
                 Quaternion.identity);
 
             AgentController agent = agentGameObject.GetComponent<AgentController>();
             activeAgents.Add(agent);
+            agent.initialize(this);
             agent.transform.SetParent(agentsParent);
-            agent.destination = goalPoint.position;
+            agent.setGoal(goalPoint);
 
             yield return new WaitForSeconds(3f);
         }
