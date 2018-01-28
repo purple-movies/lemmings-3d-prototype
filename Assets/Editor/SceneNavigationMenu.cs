@@ -23,7 +23,8 @@ public static class SceneNavigationMenu
 
     [MenuItem(SCENE_NAVIGATION_MENU + "1 Level1")] public static void loadLevel1()
     {
-        GameObject.Find(START_MENU_NAME).SetActive(false);
+        GameObject startMenu = GameObject.Find(START_MENU_NAME);
+        if (startMenu) startMenu.SetActive(false);
 
         EditorSceneManager.OpenScene(SCENE_DIRECTORY_PATH + "Levels/Level1.unity", 
             OpenSceneMode.Additive);
