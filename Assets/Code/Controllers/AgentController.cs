@@ -7,9 +7,15 @@ using UnityEngine.AI;
 
 public class AgentController : DraconianBehaviour
 {
+    public enum Behaviour { WALKER, BLOCKER }
+
+    public Behaviour behaviour { get { return mBehaviour; } set { initializeBehviour(value); } }
+
     [SerializeField] private NavMeshAgent navMeshAgent;
     private LevelController levelController;
+    private UIController uiController;
     private Collider goalCollider;
+    private Behaviour mBehaviour = Behaviour.WALKER;
 
     public bool active { set { gameObject.SetActive(value); } }
 
@@ -17,6 +23,7 @@ public class AgentController : DraconianBehaviour
     {
         reset();
         this.levelController = levelController;
+        uiController = UIController.instance;
     }
 
     public void setGoal(Transform goalTransform)
@@ -31,17 +38,43 @@ public class AgentController : DraconianBehaviour
         Destroy(gameObject);
     }
 
+    //protected override void OnMouseDown()
+    //{
+    //    base.OnMouseDown();
+    //    uiController.onAgentClicked(this);
+    //}
+
     protected override void OnTriggerEnter(Collider other)
     {
         base.OnTriggerEnter(other);
 
         if (other.Equals(goalCollider))
             levelController.agentReachedGoal(this);
+        else if (other.tag.Equals(TagNames.AGENT_KILLER))
+            destroy();
     }
 
     private void reset()
     {
         levelController = null;
         goalCollider = null;
+    }
+
+    private void initializeBehviour(Behaviour behaviour)
+    {
+        mBehaviour = behaviour;
+
+        switch (behaviour)
+        {
+            case Behaviour.BLOCKER:
+                startBlocking();
+                break;
+            default: break;
+        }
+    }
+
+    private void startBlocking()
+    {
+        navMeshAgent.destination = transform.position;
     }
 }

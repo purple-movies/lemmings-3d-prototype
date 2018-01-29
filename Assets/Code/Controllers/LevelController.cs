@@ -26,6 +26,7 @@ public class LevelController : BaseLevelController
     {
         if (resetting) return;
         activeAgents.Remove(agent);
+        checkForLevelCompletion();
     }
 
     public override void startLevel()
@@ -36,10 +37,10 @@ public class LevelController : BaseLevelController
 
     public void agentReachedGoal(AgentController agent)
     {
-        Debug.Log("reached goal : " + agent);
-
+        activeAgents.Remove(agent);
         savedAgents.Add(agent);
         agent.active = false;
+        checkForLevelCompletion();
     }
 
     protected override void reset()
@@ -56,6 +57,14 @@ public class LevelController : BaseLevelController
             removeAgent(savedAgents, agent);
 
         endResetting();
+    }
+
+    private void checkForLevelCompletion()
+    {
+        if (activeAgents.Count < 1)
+        {
+            masterController.onLevelCompleted(savedAgents.Count >= agentsToWinCount);
+        }
     }
 
     private IEnumerator spawnAgent()
