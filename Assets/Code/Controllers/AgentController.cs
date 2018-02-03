@@ -12,9 +12,11 @@ public class AgentController : DraconianBehaviour
     public Behaviour behaviour { get { return mBehaviour; } set { initializeBehviour(value); } }
 
     [SerializeField] private NavMeshAgent navMeshAgent;
+    [SerializeField] private GameObject blockObstaclePrefab;
     private LevelController levelController;
     private UIController uiController;
     private Collider goalCollider;
+    private GameObject blockObstacle;
     private Behaviour mBehaviour = Behaviour.WALKER;
 
     public bool active { set { gameObject.SetActive(value); } }
@@ -76,5 +78,7 @@ public class AgentController : DraconianBehaviour
     private void startBlocking()
     {
         navMeshAgent.destination = transform.position;
+        navMeshAgent.enabled = false;
+        blockObstacle = Instantiate(blockObstaclePrefab, transform.position, transform.rotation);
     }
 }
